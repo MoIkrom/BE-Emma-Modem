@@ -1,0 +1,4 @@
+# file yang harus di ignore saat pushke github
+
+node_modules
+.env
