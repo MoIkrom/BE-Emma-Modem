@@ -18,10 +18,6 @@ Router.get("/webhook/view", (req, res) => {
 Router.post("/webhook", async (req, res) => {
   try {
     console.log("Received webhook:", req.body);
-    const targetUrl =
-      "https://be-emma-modem.vercel.app/api/v1/sms-inbox/webhook/view";
-
-    await axios.get(targetUrl, { params: req.body });
     res.status(200).json({
       msg: "Success! Data forwarded",
     });
