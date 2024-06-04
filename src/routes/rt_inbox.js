@@ -13,6 +13,7 @@ Router.get("/webhook/view", (req, res) => {
 
   res.status(200).json({
     msg: "Data received successfully",
+    data: forwardedData,
   });
 });
 Router.post("/webhook", async (req, res) => {
