@@ -6,14 +6,13 @@ const axios = require("axios");
 const Router = express.Router();
 
 Router.get("/webhook/view", (req, res) => {
-  const forwardedData = req.query;
-  console.log("Received forwarded data:", forwardedData);
-
+  const jsonData = JSON.stringify(req.query);
+  console.log("Received forwarded data:", jsonData);
   // Do something with the received data
 
   res.status(200).json({
     msg: "Data received successfully",
-    data: forwardedData,
+    data: jsonData,
   });
 });
 Router.post("/webhook", async (req, res) => {
