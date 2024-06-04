@@ -36,7 +36,7 @@ Router.post("/webhook", async (req, res) => {
     // Send processed data
     res.status(200).json({
       msg: "Success Get Data",
-      data: postdata,
+      data: req.body,
     });
 
     // Send original request body (if needed)
