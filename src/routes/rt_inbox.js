@@ -10,7 +10,7 @@ Router.get("/webhook", async (req, res) => {
 
     res.status(200).json({
       msg: "Success Get Data",
-      data: req,
+      data: req.body,
     });
   } catch (error) {
     console.error("Error processing webhook:", error);
