@@ -6,7 +6,7 @@ const wrapper = require("../utils/wrapper");
 module.exports = {
   storeInbox: async (req, res) => {
     try {
-      // console.log("Received webhook:", req.body);
+      console.log("Received webhook:", req.body);
       const { msg, originator, receive_date, id, gateway_number } = req.body;
 
       const setInbox = {
