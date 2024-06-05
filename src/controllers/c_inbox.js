@@ -1,28 +1,33 @@
+/* eslint-disable camelcase */
 /* eslint-disable consistent-return */
-/* eslint-disable no-unused-vars */
-// const {
-//   getAllUser,
-
-// } = require("../models/r_inbox");
+const { storeInbox } = require("../models/r_inbox");
 const wrapper = require("../utils/wrapper");
 
 module.exports = {
-  getAllinbox: async (request, response) => {
+  storeInbox: async (req, res) => {
     try {
-      // console.log(response);
+      // console.log("Received webhook:", req.body);
+      const { msg, originator, receive_date, id, gateway_number } = req.body;
 
-      return response.status(200).json({
-        status: 200,
-        message: "Success Get Data!",
-        data: [], // Ganti dengan data yang diperoleh dari logika Anda
-      });
+      const setInbox = {
+        msg,
+        originator,
+        receive_date,
+        id_number: id,
+        gateway_number,
+      };
+      const result = await storeInbox(setInbox);
+      return wrapper.response(
+        res,
+        result.status,
+        "Success Store Inbox to Database ",
+        result.data
+      );
     } catch (error) {
-      const {
-        status = 500,
-        statusText = "Internal Server Error",
-        error: errorData = null,
-      } = error;
-      return wrapper.response(response, status, statusText, errorData);
+      console.error("Error processing webhook:", error);
+      res.status(500).json({
+        msg: "Internal server Error",
+      });
     }
   },
 };

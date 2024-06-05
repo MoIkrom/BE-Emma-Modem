@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
 const express = require("express");
-const axios = require("axios");
+const { storeInbox } = require("../controllers/c_inbox");
 
 const Router = express.Router();
 
@@ -15,22 +15,6 @@ Router.get("/webhook/view", (req, res) => {
     data: jsonData,
   });
 });
-Router.post("/webhook", async (req, res) => {
-  try {
-    console.log("Received webhook:", req.body);
-
-    const targetUrl =
-      "https://backend-emma.vercel.app/api/v1/sms-inbox/webhook/view";
-    await axios.get(targetUrl, { params: req.body });
-    res.status(200).json({
-      msg: "Success! Data forwarded",
-    });
-  } catch (error) {
-    console.error("Error processing webhook:", error);
-    res.status(500).json({
-      msg: "Internal server Error",
-    });
-  }
-});
+Router.post("/webhook", storeInbox);
 
 module.exports = Router;

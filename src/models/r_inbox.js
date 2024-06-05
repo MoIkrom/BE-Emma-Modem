@@ -1,12 +1,12 @@
 const supabase = require("../config/supabase");
 
 module.exports = {
-  getAllUser: (offset, limit) =>
+  storeInbox: (data) =>
     new Promise((resolve, reject) => {
       supabase
-        .from("user")
-        .select("id, email, username, created_at")
-        .range(offset, offset + limit - 1)
+        .from("inbox")
+        .insert([data])
+        .select("msg, originator, receive_date, id_number, gateway_number")
         .then((result) => {
           if (!result.error) {
             resolve(result);
