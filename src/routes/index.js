@@ -11,6 +11,7 @@ const Router = express.Router();
 const userRoutes = require("./rt_user");
 const authRoutes = require("./rt_auth");
 const targetRoutes = require("./rt_target");
+const inboxRoutes = require("./rt_inbox");
 
 // Declare Variable
 const prefix = "/api/v1";
@@ -19,5 +20,6 @@ const prefix = "/api/v1";
 Router.use(`${prefix}/user`, userRoutes);
 Router.use(`${prefix}/auth`, authRoutes);
 Router.use(`${prefix}/target`, targetRoutes);
+Router.use(`${prefix}/sms-inbox`, inboxRoutes);
 
 module.exports = Router;
