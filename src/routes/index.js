@@ -10,6 +10,7 @@ const Router = express.Router();
 // Declare Variable & Call Router
 const userRoutes = require("./rt_user");
 const authRoutes = require("./rt_auth");
+const targetRoutes = require("./rt_target");
 
 // Declare Variable
 const prefix = "/api/v1";
@@ -17,5 +18,6 @@ const prefix = "/api/v1";
 // Use router file as af callback
 Router.use(`${prefix}/user`, userRoutes);
 Router.use(`${prefix}/auth`, authRoutes);
+Router.use(`${prefix}/target`, targetRoutes);
 
 module.exports = Router;

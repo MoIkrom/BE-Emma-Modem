@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 const bcrypt = require("bcrypt");
@@ -218,7 +219,6 @@ module.exports = {
       }
       return wrapper.response(response, result.status, "Success Delete Data !");
     } catch (error) {
-      console.log(error);
       const {
         status = 500,
         statusText = "Internal Server Error",
