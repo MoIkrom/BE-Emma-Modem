@@ -3,9 +3,13 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable import/no-extraneous-dependencies */
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+
 const xlsx = require("xlsx");
 const supabase = require("../config/supabase");
-
+// Load the UTC plugin
+dayjs.extend(utc);
 module.exports = {
   store: async (filePath) => {
     try {
@@ -18,6 +22,7 @@ module.exports = {
       for (const record of jsonData) {
         const { error } = await supabase.from("target").insert(record);
         if (error) {
+          console.log(error)
           throw error;
         }
       }
@@ -28,6 +33,8 @@ module.exports = {
   },
   getAllDataModel: (limit, offset) =>
     new Promise((resolve, reject) => {
+      const todayUTCStart = dayjs().utc().startOf("day").format();
+      const todayUTCEnd = dayjs().utc().endOf("day").format();
       supabase
         .from("target")
         .select(
@@ -37,7 +44,6 @@ module.exports = {
           "Site Code",
           "Site Name",
           "Location Code",
-          "Read Date",
           "Message Offline",
           "Meter No",
           "Meter Brand - Type",
@@ -49,8 +55,9 @@ module.exports = {
           "IP"
           `
         )
+        .gte("created_at", todayUTCStart) // Greater than or equal to start of the day UTC
+        .lte("created_at", todayUTCEnd)
         .range(offset, offset + limit - 1)
-        // .order("created_at", { ascending: false })
         .then((result) => {
           if (!result.error) {
             resolve(result.data);
@@ -61,6 +68,43 @@ module.exports = {
         });
     }),
 
+  getAllDataperDay: () =>
+    new Promise((resolve, reject) => {
+      const todayUTCStart = dayjs().utc().startOf("day").format();
+      const todayUTCEnd = dayjs().utc().endOf("day").format();
+      supabase
+        .from("target")
+        .select(
+          `
+            "Location Name",
+            "SIM Card No",
+            "Site Code",
+            "Site Name",
+            "Location Code",
+            "Message Offline",
+            "Meter No",
+            "Meter Brand - Type",
+            "Comm Device No",
+            "Comm Device Brand - Type",
+            "Comm Type",
+            "Comm Port",
+            "SIM Card Provider",
+            "IP"
+            `
+        )
+        // .eq("created_at", today)
+        .gte("created_at", todayUTCStart) // Greater than or equal to start of the day UTC
+        .lte("created_at", todayUTCEnd)
+        .range(offset, offset + limit - 1)
+        .then((result) => {
+          if (!result.error) {
+            resolve(result.data);
+          } else {
+            console.log(result.error);
+            reject(result);
+          }
+        });
+    }),
   getCountData: () =>
     new Promise((resolve, reject) => {
       supabase
