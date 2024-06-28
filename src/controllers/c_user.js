@@ -24,6 +24,7 @@ module.exports = {
 
       //   PROSES VALIDASI EMAIL
       const validateEmail = () =>
+        // eslint-disable-next-line no-useless-escape
         email.match(/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/);
 
       if (!validateEmail(email)) {
@@ -70,25 +71,6 @@ module.exports = {
           result.data
         );
       });
-    } catch (error) {
-      console.log(error);
-      const {
-        status = 500,
-        statusText = "Internal Server Error",
-        error: errorData = null,
-      } = error;
-      return wrapper.response(response, status, statusText, errorData);
-    }
-  },
-  EditPassword: async (request, response) => {
-    try {
-      //   const getId = await getUserbyId(id);
-
-      return wrapper.response(
-        response,
-        result.status,
-        "Success Edit Password "
-      );
     } catch (error) {
       console.log(error);
       const {

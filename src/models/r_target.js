@@ -22,7 +22,7 @@ module.exports = {
       for (const record of jsonData) {
         const { error } = await supabase.from("target").insert(record);
         if (error) {
-          console.log(error)
+          console.log(error);
           throw error;
         }
       }
@@ -95,7 +95,6 @@ module.exports = {
         // .eq("created_at", today)
         .gte("created_at", todayUTCStart) // Greater than or equal to start of the day UTC
         .lte("created_at", todayUTCEnd)
-        .range(offset, offset + limit - 1)
         .then((result) => {
           if (!result.error) {
             resolve(result.data);

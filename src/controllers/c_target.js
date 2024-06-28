@@ -62,6 +62,7 @@ module.exports = {
     }
   },
 
+  // eslint-disable-next-line consistent-return
   fetchMessages: async (req, res) => {
     try {
       // Lakukan request ke API untuk mendapatkan pesan
