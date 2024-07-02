@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
@@ -13,8 +14,14 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const axios = require("axios");
 const {
   getAllDataModel,
+  getAllDataperDay,
   getCountData,
+  searchData,
+  getCountDataperDay,
+  getCountDataperMonth,
   getAllNumbers,
+  getCountsuccessDaily,
+  getCountsuccessMonthly,
 } = require("../models/r_target");
 const wrapper = require("../utils/wrapper");
 
@@ -184,6 +191,99 @@ module.exports = {
     } catch (error) {
       console.error("Error in checkStatusModem:", error);
       return res.status(500).json({ error: "Internal server error" });
+    }
+  },
+
+  dataToday: async (request, response) => {
+    try {
+      const data = await getAllDataperDay();
+      return wrapper.response(response, 200, "Success Get Data!", {
+        data,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  // searchData: async (response) => {
+  //   try {
+  //     const data = await searchData();
+  //     console.log(data);
+
+  //     return wrapper.response(response, 200, "Success Get Data!", {
+  //       data,
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // },
+  getCountDataperDay: async (req, response) => {
+    try {
+      // Assuming `term` is the query parameter for search term
+      const data = await getCountDataperDay(); // Call the model function with the search term
+      console.log(data);
+
+      return wrapper.response(response, 200, "Success Get Data!", {
+        data,
+      });
+    } catch (error) {
+      console.error(error);
+      // Handle error appropriately, e.g., return an error response
+    }
+  },
+  getCountDataperMonth: async (req, response) => {
+    try {
+      // Assuming `term` is the query parameter for search term
+      const data = await getCountDataperMonth(); // Call the model function with the search term
+      console.log(data);
+
+      return wrapper.response(response, 200, "Success Get Data!", {
+        data,
+      });
+    } catch (error) {
+      console.error(error);
+      // Handle error appropriately, e.g., return an error response
+    }
+  },
+  getCountsuccessDaily: async (req, response) => {
+    try {
+      // Assuming `term` is the query parameter for search term
+      const data = await getCountsuccessDaily(); // Call the model function with the search term
+      console.log(data);
+
+      return wrapper.response(response, 200, "Success Get Data!", {
+        data,
+      });
+    } catch (error) {
+      console.error(error);
+      // Handle error appropriately, e.g., return an error response
+    }
+  },
+  getCountsuccessMonthly: async (req, response) => {
+    try {
+      // Assuming `term` is the query parameter for search term
+      const data = await getCountsuccessMonthly(); // Call the model function with the search term
+      console.log(data);
+
+      return wrapper.response(response, 200, "Success Get Data!", {
+        data,
+      });
+    } catch (error) {
+      console.error(error);
+      // Handle error appropriately, e.g., return an error response
+    }
+  },
+  searchData: async (req, response) => {
+    try {
+      const searchTerm = req.query.data; // Assuming `term` is the query parameter for search term
+      const data = await searchData(searchTerm); // Call the model function with the search term
+      console.log(data);
+
+      return wrapper.response(response, 200, "Success Get Data!", {
+        data,
+      });
+    } catch (error) {
+      console.error(error);
+      // Handle error appropriately, e.g., return an error response
     }
   },
 };

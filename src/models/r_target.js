@@ -33,8 +33,6 @@ module.exports = {
   },
   getAllDataModel: (limit, offset) =>
     new Promise((resolve, reject) => {
-      const todayUTCStart = dayjs().utc().startOf("day").format();
-      const todayUTCEnd = dayjs().utc().endOf("day").format();
       supabase
         .from("target")
         .select(
@@ -55,8 +53,6 @@ module.exports = {
           "IP"
           `
         )
-        .gte("created_at", todayUTCStart) // Greater than or equal to start of the day UTC
-        .lte("created_at", todayUTCEnd)
         .range(offset, offset + limit - 1)
         .then((result) => {
           if (!result.error) {
@@ -95,6 +91,131 @@ module.exports = {
         // .eq("created_at", today)
         .gte("created_at", todayUTCStart) // Greater than or equal to start of the day UTC
         .lte("created_at", todayUTCEnd)
+        .then((result) => {
+          if (!result.error) {
+            resolve(result.data);
+          } else {
+            console.log(result.error);
+            reject(result);
+          }
+        });
+    }),
+  getCountDataperDay: () =>
+    new Promise((resolve, reject) => {
+      const todayUTCStart = dayjs().utc().startOf("day").format();
+      const todayUTCEnd = dayjs().utc().endOf("day").format();
+
+      supabase
+        .from("target")
+        .select("*", { count: "exact", head: true }) // Efficiently get data and count
+        .gte("created_at", todayUTCStart)
+        .lte("created_at", todayUTCEnd)
+        .then((result) => {
+          if (!result.error) {
+            // const { data } = result; // Access both data and count
+            const { count } = result;
+            resolve({ count }); // Return both data and count
+          } else {
+            console.log(result.error);
+            reject(result);
+          }
+        });
+    }),
+  getCountsuccessDaily: () =>
+    new Promise((resolve, reject) => {
+      const todayUTCStart = dayjs().utc().startOf("day").format();
+      const todayUTCEnd = dayjs().utc().endOf("day").format();
+
+      supabase
+        .from("inboxApi")
+        .select("created_at", { count: "exact", head: true })
+        .filter("sms", "eq", "+RESET:OK")
+        .gte("created_at", todayUTCStart)
+        .lte("created_at", todayUTCEnd)
+        .then((result) => {
+          if (!result.error) {
+            // const { data } = result; // Access both data and count
+            const { count } = result;
+            resolve({ count }); // Return both data and count
+          } else {
+            console.log(result.error);
+            reject(result);
+          }
+        });
+    }),
+  getCountDataperMonth: () =>
+    new Promise((resolve, reject) => {
+      const today = dayjs().utc(); // Get current date in UTC
+      const monthStart = today.startOf("month").format(); // Format month start in UTC
+      const monthEnd = today.endOf("month").format(); // Format month end in UTC
+
+      supabase
+        .from("target")
+        .select(
+          "created_at                                                                                     ",
+          { count: "exact", head: true }
+        ) // Efficiently get data and count
+        .gte("created_at", monthStart)
+        .lte("created_at", monthEnd)
+        .then((result) => {
+          if (!result.error) {
+            // const { data } = result; // Access both data and count
+            const { count } = result;
+            resolve({ count }); // Return both data and count
+          } else {
+            console.log(result.error);
+            reject(result);
+          }
+        });
+    }),
+  getCountsuccessMonthly: () =>
+    new Promise((resolve, reject) => {
+      const today = dayjs().utc(); // Get current date in UTC
+      const monthStart = today.startOf("month").format(); // Format month start in UTC
+      const monthEnd = today.endOf("month").format(); // Format month end in UTC
+
+      supabase
+        .from("inboxApi")
+        .select("created_at", { count: "exact", head: true })
+        .filter("sms", "eq", "+RESET:OK")
+        .gte("created_at", monthStart)
+        .lte("created_at", monthEnd)
+        .then((result) => {
+          if (!result.error) {
+            // const { data } = result; // Access both data and count
+            const { count } = result;
+            resolve({ count }); // Return both data and count
+          } else {
+            console.log(result.error);
+            reject(result);
+          }
+        });
+    }),
+  searchData: (data) =>
+    new Promise((resolve, reject) => {
+      supabase
+        .from("target")
+        .select(
+          `
+            "Location Name",
+            "SIM Card No",
+            "Site Code",
+            "Site Name",
+            "Location Code",
+            "Message Offline",
+            "Meter No",
+            "Meter Brand - Type",
+            "Comm Device No",
+            "Comm Device Brand - Type",
+            "Comm Type",
+            "Comm Port",
+            "SIM Card Provider",
+            "IP"
+            `
+        )
+        .ilike("Location Name", `%${data}%`)
+        // .or("SIM Card No", "ilike", `%${data}%`)
+        // .or("Comm Device Brand - Type", "ilike", `%${data}%`)
         .then((result) => {
           if (!result.error) {
             resolve(result.data);
