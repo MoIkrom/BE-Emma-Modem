@@ -213,9 +213,7 @@ module.exports = {
             "IP"
             `
         )
-        .ilike("Location Name", `%${data}%`)
-        // .or("SIM Card No", "ilike", `%${data}%`)
-        // .or("Comm Device Brand - Type", "ilike", `%${data}%`)
+        .ilike("SIM Card No", `%${data}%`)
         .then((result) => {
           if (!result.error) {
             resolve(result.data);
