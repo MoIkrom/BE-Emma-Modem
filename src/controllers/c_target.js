@@ -138,7 +138,7 @@ module.exports = {
       const simCardNumbers = await getAllNumbers();
 
       // Mengubah nomor SIM Card yang dimulai dengan '8' atau '08' menjadi format '+62'
-      const formattedNumbers = simCardNumbers.map((entry) => {
+      const promises = simCardNumbers.map(async (entry) => {
         let simCardNo = entry["SIM Card No"];
 
         // Pastikan simCardNo memiliki nilai yang valid
@@ -149,42 +149,35 @@ module.exports = {
           // Menggunakan regex untuk memeriksa dan mengubah nomor menjadi format '+62'
           simCardNo = simCardNo.replace(/^0?8/, "+628");
 
-          return { "SIM Card No": simCardNo };
+          const { data: messages, error } = await supabase
+            .from("inboxApi")
+            .select("sms")
+            .eq("msisdn", simCardNo);
+
+          if (error) {
+            console.error(
+              `Error fetching messages for sender ${simCardNo}:`,
+              error
+            );
+            return res.status(500).json({ error: "Error fetching messages" });
+          }
+          // Jika ada pesan yang ditemukan, tambahkan ke finalResults
+          if (messages && messages.length > 0) {
+            return {
+              "SIM Card No": simCardNo,
+              message: messages[0]?.sms, // Mengambil pesan pertama dari hasil query
+            };
+          }
+          return {
+            "SIM Card No": simCardNo,
+            message: "Modem No Respon",
+          };
         }
         // Jika simCardNo tidak valid, kembalikan entry asli
         return entry;
       });
       // Array untuk menyimpan hasil akhir yang akan dikirim sebagai respons
-      const finalResults = [];
-
-      // Loop untuk setiap nomor SIM Card yang diformat
-      for (const formattedNumber of formattedNumbers) {
-        const { "SIM Card No": sender } = formattedNumber;
-        // Query untuk mencari message dari inboxApi berdasarkan sender
-        const { data: messages, error } = await supabase
-          .from("inboxApi")
-          .select("sms")
-          .eq("msisdn", sender);
-
-        if (error) {
-          console.error(`Error fetching messages for sender ${sender}:`, error);
-          return res.status(500).json({ error: "Error fetching messages" });
-        }
-
-        // Jika ada pesan yang ditemukan, tambahkan ke finalResults
-        if (messages && messages.length > 0) {
-          finalResults.push({
-            "SIM Card No": sender,
-            message: messages[0]?.sms, // Mengambil pesan pertama dari hasil query
-          });
-        } else {
-          // Jika tidak ada pesan ditemukan, tambahkan sender saja ke finalResults
-          finalResults.push({
-            "SIM Card No": sender,
-            message: "Modem No Respon",
-          });
-        }
-      }
+      const finalResults = await Promise.all(promises);
 
       // Mengirimkan respons JSON dengan data finalResults ke client
       return res.status(200).json(finalResults);
