@@ -31,12 +31,12 @@ module.exports = {
       throw err;
     }
   },
-  getAllDataModel: (limit, offset) =>
+  getAllDataModel: () =>
     new Promise((resolve, reject) => {
       supabase
         .from("target")
         .select(
-          `
+          `"Status",
           "Location Name",
           "SIM Card No",
           "Site Code",
@@ -53,7 +53,7 @@ module.exports = {
           "IP"
           `
         )
-        .range(offset, offset + limit - 1)
+        .order("created_at", { ascending: false })
         .then((result) => {
           if (!result.error) {
             resolve(result.data);
@@ -71,7 +71,7 @@ module.exports = {
       supabase
         .from("target")
         .select(
-          `
+          `"Status",
             "Location Name",
             "SIM Card No",
             "Site Code",
@@ -127,9 +127,9 @@ module.exports = {
       const todayUTCEnd = dayjs().utc().endOf("day").format();
 
       supabase
-        .from("inboxApi")
+        .from("target")
         .select("created_at", { count: "exact", head: true })
-        .filter("sms", "eq", "+RESET:OK")
+        .filter("Status", "eq", "+RESET:OK")
         .gte("created_at", todayUTCStart)
         .lte("created_at", todayUTCEnd)
         .then((result) => {
@@ -196,7 +196,7 @@ module.exports = {
       supabase
         .from("target")
         .select(
-          `
+          `"Status",
             "Location Name",
             "SIM Card No",
             "Site Code",
