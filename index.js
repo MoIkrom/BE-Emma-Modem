@@ -20,13 +20,6 @@ const port = 3001;
 const routerNavigation = require("./src/routes");
 
 // called Requirements
-// Redirect HTTP to HTTPS
-app.use((req, res, next) => {
-  if (req.headers["x-forwarded-proto"] !== "https") {
-    return res.redirect(`https://${req.headers.host}${req.url}`);
-  }
-  return next();
-});
 app.use(cors());
 app.use(morgan("dev"));
 app.use(helmet());
