@@ -64,6 +64,47 @@ module.exports = {
         });
     }),
 
+  StoreOPMStatus: () =>
+    new Promise((resolve, reject) => {
+      supabase
+        .from("target")
+        .select("id, Status")
+        .eq("SIM Card No", "0859199038816")
+        .then((response) => {
+          if (response.error) {
+            console.error("Error fetching data:", response.error);
+            reject(response.error);
+          }
+          const targetData = response.data[0];
+
+          if (targetData && targetData.Status === null) {
+            // Lakukan update jika Status sebelumnya null
+            supabase
+              .from("target")
+              .update({ Status: "+RESET:OK" })
+              .eq("id", targetData.id)
+              .then((updateResponse) => {
+                if (updateResponse.error) {
+                  console.error("Error updating data:", updateResponse.error);
+                  reject(updateResponse.error);
+                } else {
+                  console.log("Data updated successfully");
+                  resolve(updateResponse.data);
+                }
+              });
+          } else {
+            console.log(
+              "No data found for SIM Card No 0859199038816 or Status is already set"
+            );
+            resolve(targetData); // Mengembalikan data yang ditemukan (mungkin null)
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching or updating data:", error);
+          reject(error);
+        });
+    }),
+
   getAllDataperDay: () =>
     new Promise((resolve, reject) => {
       const todayUTCStart = dayjs().utc().startOf("day").format();

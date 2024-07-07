@@ -18,6 +18,7 @@ const {
   searchData,
   getCountDataperDay,
   getCountDataperMonth,
+  StoreOPMStatus,
   getCountsuccessDaily,
   getCountsuccessMonthly,
 } = require("../models/r_target");
@@ -127,19 +128,16 @@ module.exports = {
       const url = process.env.URL_API;
       const response = await axios.get(`${url}?sts=0&jml=50`);
       const messagesDB = response.data;
-
       const insertedMessages = [];
 
-      console.log(messagesDB);
-      console.log("ini messagesDB");
+      await StoreOPMStatus();
       // Iterasi setiap pesan dari messagesDB
       Object.keys(messagesDB).forEach(async (key) => {
         const message = messagesDB[key];
         const { msisdn, sms } = message;
         const simCardNo = msisdn.replace(/['`]/g, "").replace(/^\+628/, "08");
-        console.log(simCardNo);
-        console.log("ini simCardNo");
         // Tambahkan promise operasi update ke Supabase ke dalam array
+
         insertedMessages.push(
           supabase
             .from("target")
